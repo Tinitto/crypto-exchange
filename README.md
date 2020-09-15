@@ -42,8 +42,7 @@ Watch [this talk by Alexandra Noonan](https://www.youtube.com/watch?v=hIFeaeZ9_A
 
 - Install an in-memory display server (xvfb)
 
-``` 
-#!bash
+```bash
 
 sudo apt-get update
 sudo apt-get install -y curl unzip xvfb libxi6 libgconf-2-4
@@ -51,8 +50,7 @@ sudo apt-get install -y curl unzip xvfb libxi6 libgconf-2-4
 
 - Install Google Chrome
 
-``` 
-#!bash
+```bash
 
 sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
 sudo echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
@@ -66,23 +64,19 @@ title "How to set up Debian server for Selenium Chrome driver"
 
 - Clone the repo
 
-```
-#!bash
-
+```bash
 git clone <url_of_repo>
 ```
 
 - Create a virtualenv
 
-``` 
-#! bash
+```bash
 
 cd stock-exchange && python3.6 -m venv env
 ```
 - Activate the virtual environment
 
-``` 
-#!bash
+```bash
 
 source env/bin/activate
 
@@ -90,17 +84,13 @@ source env/bin/activate
 
 - Copy the `.example.env` file to `.env` and update the variables in there. You might need to get an api key from [Nomics](https://p.nomics.com/pricing)
 
-```
-#!bash
-
+```bash
 cp .example.env .env
 ```
 
 - Run the command
 
-```
-#!bash
-
+```bash
 python main.py
 ```
 
@@ -137,6 +127,7 @@ then have fast api websocket send data to the clients
 
 Here is the folder structure
 
+```
 .
 ├── app
 │   ├── core
@@ -150,22 +141,23 @@ Here is the folder structure
 │   │   │   └── rest_api
 │   │   └── utils
 │   └── services
-│       └── yahoo_finance
+│       └── nomics
 │           ├── export_site_to_db
 │           │   ├── controllers
 │           │   ├── destinations
-│           │   │   └── yahoo_finance_historical_db
+│           │   │   └── noimcs_historical_db
 │           │   │       └── models
 │           │   └── sources
 │           │       └── base
 │           └── rest_api_to_db
 │               ├── controllers
 │               ├── destinations
-│               │   └── yahoo_finance_db
-│               │       └── models
+│               │   └── nomics_live_db
+│               │ 
 │               └── sources
 └── assets
     └── csv
+```
 
 
 ### [main.py](./main.py)
