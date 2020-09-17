@@ -9,4 +9,4 @@ TokyoCEHistoricalDBBase = declarative_base()
 class TokyoCEHistoricalDBBaseModel(DatabaseBaseModel, TokyoCEHistoricalDBBase):
     __abstract__ = True
     _base_declarative_class = TokyoCEHistoricalDBBase
-    __table_args__ = {'schema': 'file_download_data'}
+    __table_args__ = {'schema': 'downloads'}

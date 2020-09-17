@@ -1,28 +1,24 @@
 """Model for quotes for all products by trade date"""
-import uuid
-
 import sqlalchemy as orm
-from sqlalchemy.dialects.postgresql import UUID
 
 from ...abstract.destinations.tokyo_c_e_historical_db import TokyoCEHistoricalDBBaseModel, \
     TokyoCEHistoricalDbConnectionConfig
 
 
-class Quote(TokyoCEHistoricalDBBaseModel):
+class QuoteByTradeDate(TokyoCEHistoricalDBBaseModel):
     """
     Database model for "Quotes for All Products by Trade Date"
     """
-    __tablename__ = 'quotes'
+    __tablename__ = 'quotes_by_trade_date'
     _db_configuration = TokyoCEHistoricalDbConnectionConfig()
 
-    _id = orm.Column(UUID(as_uuid=True), name='id', primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
     update_date = orm.Column(orm.Date)
     update_time = orm.Column(orm.Time)
     trade_date = orm.Column(orm.Date)
     institutions_code = orm.Column(orm.VARCHAR(10))
     trade_type = orm.Column(orm.VARCHAR(255))
-    product_code = orm.Column(orm.Text)
-    contract_month = orm.Column(orm.VARCHAR(20))
+    product_code = orm.Column(orm.Text, primary_key=True)
+    contract_month = orm.Column(orm.VARCHAR(20), primary_key=True)
     strike_price = orm.Column(orm.FLOAT(precision=15, decimal_return_scale=2))
     at_the_money_flag = orm.Column(orm.VARCHAR(10))
     volume_fix_flag = orm.Column(orm.VARCHAR(10))

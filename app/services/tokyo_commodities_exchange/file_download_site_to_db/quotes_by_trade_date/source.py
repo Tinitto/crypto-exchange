@@ -4,7 +4,7 @@ from typing import List
 from ..abstract.sources.datetime_based_source import TokyoCEDatetimeBasedFileDownloadSiteSource
 
 
-class QuotesDataset(TokyoCEDatetimeBasedFileDownloadSiteSource):
+class QuotesByTradeDateDataset(TokyoCEDatetimeBasedFileDownloadSiteSource):
     """Class for getting quotes for all products data from the Tokyo Commodity Exchange export site"""
     start_datetime_select_input_xpath: str = '//*[@id="article"]/form/table[3]/tbody/tr[1]/td[5]/select'
     download_button_xpath: str = '//*[@id="article"]/form/table[3]/tbody/tr[1]/td[5]/input'

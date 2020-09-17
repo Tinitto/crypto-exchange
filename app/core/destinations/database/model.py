@@ -81,21 +81,19 @@ class DatabaseBaseModel(DestinationBaseModel):
                 db_connection_config=cls._db_configuration) as db_connection:
             session = db_connection.db_session
 
-            primary_key_names = [column.key for column in inspect(cls).primary_key]
+            primary_key_columns = [column for column in inspect(cls).primary_key]
+            is_data_with_primary_key = any([column.key in data for column in primary_key_columns])
 
-            record = session.query(cls).filter(
-                or_(
-                    and_(
-                        *(column == data[column.key] for column in inspect(cls).primary_key if column.key in data)
-                    )
-                )
-            ).first()
+            if is_data_with_primary_key:
+                record = session.query(cls).filter(
+                    or_(and_(*(column == data[column.key] for column in primary_key_columns)))
+                ).first()
 
-            if not record:
-                record = cls(**data)
-                record.save(session)
-                return data
+                if record:
+                    record.update(session=session, **data)
+                    return data
 
-            record.update(session=session, **data)
-
+            record = cls(**data)
+            record.save(session)
             return data
+
