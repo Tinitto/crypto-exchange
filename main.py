@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from app.services.nomics.rest_api_to_db import NOMICS_REST_API_TO_DB_CONTROLLERS
-from app.services.tokyo_commodities_exchange.file_download_site_to_db import NOMICS_FILE_DOWNLOAD_SITE_TO_DB_CONTROLLERS
+from app.services.tokyo_commodities_exchange.file_download_site_to_db import TOKYO_C_E_FILE_DOWNLOAD_SITE_TO_DB_CONTROLLERS
+from app.services.blockchain.rest_api_to_db import BLOCKCHAIN_REST_API_TO_DB_CONTROLLERS
+from app.services.finnhub.rest_api_to_db import FINNHUB_REST_API_TO_DB_CONTROLLERS
+from app.services.iex.rest_api_to_db import IEX_REST_API_TO_DB_CONTROLLERS
 
 
 def get_graph(**options):
@@ -22,7 +25,28 @@ def get_graph(**options):
             controller.load,
         )
 
-    for controller in NOMICS_FILE_DOWNLOAD_SITE_TO_DB_CONTROLLERS:
+    for controller in TOKYO_C_E_FILE_DOWNLOAD_SITE_TO_DB_CONTROLLERS:
+        graph.add_chain(
+            controller.extract,
+            controller.transform,
+            controller.load,
+        )
+
+    for controller in BLOCKCHAIN_REST_API_TO_DB_CONTROLLERS:
+        graph.add_chain(
+            controller.extract,
+            controller.transform,
+            controller.load,
+        )
+
+    for controller in FINNHUB_REST_API_TO_DB_CONTROLLERS:
+        graph.add_chain(
+            controller.extract,
+            controller.transform,
+            controller.load,
+        )
+
+    for controller in IEX_REST_API_TO_DB_CONTROLLERS:
         graph.add_chain(
             controller.extract,
             controller.transform,

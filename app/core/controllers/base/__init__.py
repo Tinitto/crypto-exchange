@@ -11,10 +11,10 @@ from app.core.transformers.base import BaseTransformer
 
 class BaseController:
     """
-    Class for the controller that gets data from a Source,
-    transforms it
-    and loads it in a destination basing on a given model
-    """
+        Class for the controller that gets data from a Source,
+        transforms it
+        and loads it in a destination basing on a given model
+        """
     _source: BaseSource
     _interval: Optional[timedelta] = None
 
@@ -22,8 +22,6 @@ class BaseController:
     source_class: Type[BaseSource]
     transformer_classes: List[Type[BaseTransformer]] = []
     interval_in_milliseconds: Optional[int] = None
-    start_date: Optional[date] = None
-    end_date: Optional[date] = None
 
     @classmethod
     def extract(cls) -> Iterator[Dict[Any, Any]]:
@@ -32,7 +30,7 @@ class BaseController:
 
         while True:
             start_time = datetime.now()
-            yield from cls.__query_source()
+            yield from cls._query_source()
 
             if cls._interval is None:
                 break
@@ -48,14 +46,14 @@ class BaseController:
     def transform(cls, data: Dict[Any, Any]) -> Iterator[Dict[Any, Any]]:
         """Transforms the data row by row into something else"""
         transformed_data = data
-        
+
         for transformer in cls.transformer_classes:
             transformed_data = transformer.run(data=transformed_data)
 
         yield transformed_data
 
     @classmethod
-    def __update_source(cls, start_date: Optional[date] = None, end_date: Optional[date] = None) -> None:
+    def _update_source(cls, *args, **kwargs) -> None:
         """
         Updates the configuration of the source especially
         those attributes that are bound to change
@@ -63,8 +61,7 @@ class BaseController:
         if not hasattr(cls, '_source'):
             cls._source = cls.source_class(
                 attributes=cls.destination_model_class.get_attributes(),
-                start_date=start_date,
-                end_date=end_date)
+                *args, **kwargs)
 
     @classmethod
     def __update_interval(cls) -> None:
@@ -79,9 +76,9 @@ class BaseController:
         cls.destination_model_class.initialize()
 
     @classmethod
-    def __query_source(cls, ) -> Iterator[Dict[Any, Any]]:
+    def _query_source(cls, ) -> Iterator[Dict[Any, Any]]:
         """Queries the data source"""
-        cls.__update_source(start_date=cls.start_date, end_date=cls.end_date)
+        cls._update_source()
         return cls._source.get()
 
     @classmethod

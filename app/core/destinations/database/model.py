@@ -83,14 +83,19 @@ class DatabaseBaseModel(DestinationBaseModel):
 
             primary_key_names = [column.key for column in inspect(cls).primary_key]
 
-            load_record = session.query(cls) \
-                .filter(or_(and_(*(column == data[column.key] for column in inspect(cls).primary_key)))).first()
+            record = session.query(cls).filter(
+                or_(
+                    and_(
+                        *(column == data[column.key] for column in inspect(cls).primary_key if column.key in data)
+                    )
+                )
+            ).first()
 
-            if not load_record:
-                load_record = cls(**data)
-                load_record.save(session)
+            if not record:
+                record = cls(**data)
+                record.save(session)
                 return data
 
-            load_record.update(session=session, **data)
+            record.update(session=session, **data)
 
             return data

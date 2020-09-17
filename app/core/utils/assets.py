@@ -4,7 +4,7 @@ import os
 import shutil
 from csv import DictReader
 from datetime import datetime
-from typing import Iterator, Dict, Any
+from typing import Iterator, Dict, Any, List, Optional
 
 ASSET_FOLDER_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'assets')
@@ -39,10 +39,10 @@ def get_csv_download_location(dataset_name: str = ''):
     return get_timestamped_folder(root_path=csv_folder_path, prefix=dataset_name)
 
 
-def read_csv_file(file_path: str) -> Iterator[Dict[str, Any]]:
+def read_csv_file(file_path: str, headers: Optional[List[str]] = None) -> Iterator[Dict[str, Any]]:
     """Reads the Downloaded file and returns the rows in the file as an iterator"""
     with open(file_path, 'r') as csv_file:
-        csv_dict_reader = DictReader(csv_file)
+        csv_dict_reader = DictReader(csv_file, fieldnames=headers)
         yield from csv_dict_reader
 
 

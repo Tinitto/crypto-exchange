@@ -1,20 +1,16 @@
-"""Module containing a base source class"""
+"""Module containing base class for date based sources"""
 
 from datetime import date
-from typing import Optional, List, Dict, Any, Iterator
+from typing import Optional, Iterator, Dict, Any
 
-from pydantic import BaseModel
+from app.core.sources.base import BaseSource
+from app.core.utils.datetime import update_date
 
-from app.core.utils.dates import update_date
 
-
-class BaseSource(BaseModel):
-    base_uri: Optional[str] = None
+class DateBasedBaseSource(BaseSource):
     default_batch_size_in_days: int = 7
-    name: Optional[str] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None
-    attributes: List[str] = None
 
     def get(self) -> Iterator[Dict[str, Any]]:
         """Returns data from a given date to a given date as an iterator"""
@@ -30,7 +26,8 @@ class BaseSource(BaseModel):
 
     def _query_data_source(self, start_date: date, end_date: date) -> Iterator[Dict[str, Any]]:
         """Queries a given start and end date and returns an iterator with data records"""
-        raise NotImplementedError('Implement the _query_data_source method to return an iterator of dictionaries')
+        raise NotImplementedError(
+            'Implement the _query_data_source method to return an iterator of dictionaries')
 
     def _get_next_end_date(self, days_to_increment_by: int = 0, days_to_decrement_by: int = 0) -> date:
         """Gets the next end date in the given iteration"""

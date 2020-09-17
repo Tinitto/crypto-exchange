@@ -26,6 +26,15 @@ def update_date(date_to_update: date, days_to_increment_by: int, days_to_decreme
     return date_to_update + timedelta(days=days_to_increment_by) - timedelta(days=days_to_decrement_by)
 
 
-def change_date_format(date_value: str, old: str, new: str):
+def update_datetime(datetime_to_update: datetime, ms_to_increment_by: int, ms_to_decrement_by: int):
+    """Updates a given datetime by incrementing and/or decrementing it by given milliseconds"""
+    return (
+            datetime_to_update
+            + timedelta(milliseconds=ms_to_increment_by)
+            - timedelta(milliseconds=ms_to_decrement_by)
+    )
+
+
+def change_datetime_format(date_value: str, old: str, new: str):
     """Converts a date string's format to another format"""
     return datetime.strptime(date_value, old).strftime(new)
