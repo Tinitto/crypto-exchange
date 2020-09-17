@@ -2,10 +2,11 @@
 
 import time
 from datetime import date, datetime, timedelta
-from typing import Type, Optional, Dict, Any, Iterator
+from typing import Type, Optional, Dict, Any, Iterator, List
 
 from app.core.destinations.base import DestinationBaseModel
 from app.core.sources.base import BaseSource
+from app.core.transformers.base import BaseTransformer
 
 
 class BaseController:
@@ -19,6 +20,7 @@ class BaseController:
 
     destination_model_class: Type[DestinationBaseModel]
     source_class: Type[BaseSource]
+    transformer_classes: List[Type[BaseTransformer]] = []
     interval_in_milliseconds: Optional[int] = None
     start_date: Optional[date] = None
     end_date: Optional[date] = None
@@ -45,7 +47,12 @@ class BaseController:
     @classmethod
     def transform(cls, data: Dict[Any, Any]) -> Iterator[Dict[Any, Any]]:
         """Transforms the data row by row into something else"""
-        yield data
+        transformed_data = data
+        
+        for transformer in cls.transformer_classes:
+            transformed_data = transformer.run(data=transformed_data)
+
+        yield transformed_data
 
     @classmethod
     def __update_source(cls, start_date: Optional[date] = None, end_date: Optional[date] = None) -> None:

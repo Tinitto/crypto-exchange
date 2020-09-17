@@ -1,10 +1,17 @@
-# Crypto Exchange ETL
+# Market Exchange ETL
 
-This is a simple app to get both realtime and historical data from [Nomics](https://nomics.com) about crypto-currencies.
+This is a simple app to get both realtime and historical data from a number of market data sources including:
+
+- [Nomics](https://nomics.com)
+- [Tokyo Commodity Exchange](https://www.tocom.or.jp/)
+- [Finnhub](https://finnhub.io/)
+- [IEX Cloud](https://iexcloud.io/s/7b028b07)
+- [Blockchain](https://www.blockchain.com/)
 
 It shows how to create a backend service to connect to any web data source and save the data in a database.
 The data in the source could be made available by:
 - REST API
+- Websocket
 - Manual historical File download
 
 It follows a service-oriented architectural (SOA) design.
@@ -19,7 +26,7 @@ Service oriented architecture makes it easy to connect actual feature requests w
 Many a time, software requirements are structured in typically a service-oriented manner.
 For example.
 - User can see realtime data about bitcoin
-- User can see realtime data about etherium
+- User can see realtime data about Ethereum
 - User can view historical data about bitcoin
 
 When we have source code that follows the exact manner these requirements are laid out, it is easy to comprehend for 
@@ -82,7 +89,12 @@ source env/bin/activate
 
 ```
 
-- Copy the `.example.env` file to `.env` and update the variables in there. You might need to get an api key from [Nomics](https://p.nomics.com/pricing)
+- Copy the `.example.env` file to `.env` and update the variables in there. 
+You might need to get API keys from:
+ - [Nomics](https://p.nomics.com/pricing)
+ - [IEX Cloud](https://iexcloud.io/console/tokens)
+ - [Blockchain](https://exchange.blockchain.com/settings/api)
+ - [Finnhub](https://finnhub.io/dashboard)
 
 ```bash
 cp .example.env .env
@@ -94,10 +106,7 @@ cp .example.env .env
 python main.py
 ```
 
-- Check the database (basing on the `LIVE_DB_URI` 
-and `HISTORICAL_DB_URI` you set in the `.env` file) for the records added.
-
-
+- Check the databases (basing on the settings in the `.env` file) for the records added.
 
 ## ToDo
 
@@ -105,7 +114,13 @@ and `HISTORICAL_DB_URI` you set in the `.env` file) for the records added.
 - [x] Change to service-oriented architecture
 - [x] Add selenium source (web scraping)
 - [x] Make each microservice independent of other microservices
-- [ ] Add transformation types
+- [x] Add transformation types
+- [ ] Add websocket data source
+- [ ] Add websocket-to-db controller
+- [ ] Add nomics service
+- [ ] Add tokyo_commodity_exchange_service
+- [ ] Add iex service
+- [ ] Add finnhub service
 - [ ] Add websocket destination
 - [ ] Add REST api destination
 - [ ] Add RabbitMQ destination
@@ -125,40 +140,8 @@ then have fast api websocket send data to the clients
 
 ## Architecture
 
-Here is the folder structure
-
-```
-.
-├── app
-│   ├── core
-│   │   ├── controllers
-│   │   │   ├── file_download_site_to_db
-│   │   │   └── rest_api_to_db
-│   │   ├── destinations
-│   │   │   └── database
-│   │   ├── sources
-│   │   │   ├── file_download_site
-│   │   │   └── rest_api
-│   │   └── utils
-│   └── services
-│       └── nomics
-│           ├── export_site_to_db
-│           │   ├── controllers
-│           │   ├── destinations
-│           │   │   └── noimcs_historical_db
-│           │   │       └── models
-│           │   └── sources
-│           │       └── base
-│           └── rest_api_to_db
-│               ├── controllers
-│               ├── destinations
-│               │   └── nomics_live_db
-│               │ 
-│               └── sources
-└── assets
-    └── csv
-```
-
+The [`core`](./app/core) package holds the framework components of the app 
+while the actual service-oriented-architecture app is found in the [`services`](./app/services) package.
 
 ### [main.py](./main.py)
 
@@ -209,10 +192,15 @@ This package connects the export site source to the database destination.
 
 This package connects the REST API source to the database destination.
 
+#### [Transformers](./app/core/transformers)
+
+This contains data transformer classes that have a `run` method that expects a dictionary 
+and outputs a transformed dictionary
+
 ### [Services](./app/services)
 
 The service folder is contains services that are split down into more services until the point of the smallest service
-that contains a `controller`, a `source` and a `destination`
+that contains a `controller`, a `source`, a `destination` and an optional `transformers` module
 
 The services folder contains independent services that can be extracted each into their own app.
 In turn each service contains a set of microservices that depend on only one package/module i.e. `abstract` in that service.
@@ -226,6 +214,9 @@ and the `core` and the `main.py`file. The latter would have to be edited to cont
 - The tutorial [How to Setup Selenium with ChromeDriver on Debian 10/9/8](https://tecadmin.net/setup-selenium-with-chromedriver-on-debian/) was very useful when deploying the app
 on a Debian server
 - Free [Crypto Market Cap & Pricing Data Provided By Nomics.](https://nomics.com/)
+- [Data provided by IEX Cloud](https://iexcloud.io)
+- [Blockchain API](https://exchange.blockchain.com/ap)
+- [Finnhub API](https://finnhub.io/docs/api)
 
 ## License
 

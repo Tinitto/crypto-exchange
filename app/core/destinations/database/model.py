@@ -19,8 +19,6 @@ class DatabaseBaseModel(DestinationBaseModel):
     __table__: Any
     _db_configuration: DatabaseConnectionConfig
     _base_declarative_class: Type[declarative_base()]
-    _source_date_format: str = '%m/%d/%Y'
-    _database_date_format: str = '%Y-%m-%d'
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -74,18 +72,11 @@ class DatabaseBaseModel(DestinationBaseModel):
                 logging.info(f"{cls.__table__} already created. \n{exp}")
 
     @classmethod
-    def clean_data(cls, data: Dict[Any, Any]):
-        """Cleans the data so that it is ready to enter the database without issues"""
-        return data
-
-    @classmethod
     def upsert(cls, data: Dict[Any, Any]):
         """
         Updates the given record row or creates it if it does not exist
         Returns data so that it can be used by the next pipe
         """
-        cleaned_data = cls.clean_data(data=data)
-
         with DatabaseConnection.get_db_connection(
                 db_connection_config=cls._db_configuration) as db_connection:
             session = db_connection.db_session
@@ -93,13 +84,13 @@ class DatabaseBaseModel(DestinationBaseModel):
             primary_key_names = [column.key for column in inspect(cls).primary_key]
 
             load_record = session.query(cls) \
-                .filter(or_(and_(*(column == cleaned_data[column.key] for column in inspect(cls).primary_key)))).first()
+                .filter(or_(and_(*(column == data[column.key] for column in inspect(cls).primary_key)))).first()
 
             if not load_record:
-                load_record = cls(**cleaned_data)
+                load_record = cls(**data)
                 load_record.save(session)
-                return cleaned_data
+                return data
 
-            load_record.update(session=session, **cleaned_data)
+            load_record.update(session=session, **data)
 
-            return cleaned_data
+            return data

@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from app.services.nomics.rest_api_to_db import NOMICS_REST_API_TO_DB_CONTROLLERS
-from app.services.nomics.file_download_site_to_db import NOMICS_FILE_DOWNLOAD_SITE_TO_DB_CONTROLLERS
+from app.services.tokyo_commodities_exchange.file_download_site_to_db import NOMICS_FILE_DOWNLOAD_SITE_TO_DB_CONTROLLERS
 
 
 def get_graph(**options):
