@@ -12,9 +12,9 @@ class QuoteByTradeDate(TokyoCEHistoricalDBBaseModel):
     __tablename__ = 'quotes_by_trade_date'
     _db_configuration = TokyoCEHistoricalDbConnectionConfig()
 
-    update_date = orm.Column(orm.Date)
-    update_time = orm.Column(orm.Time)
-    trade_date = orm.Column(orm.Date)
+    update_date = orm.Column(orm.Date, primary_key=True)
+    update_time = orm.Column(orm.Time, primary_key=True)
+    trade_date = orm.Column(orm.Date, primary_key=True)
     institutions_code = orm.Column(orm.VARCHAR(10))
     trade_type = orm.Column(orm.VARCHAR(255))
     product_code = orm.Column(orm.Text, primary_key=True)
