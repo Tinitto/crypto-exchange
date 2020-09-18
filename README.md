@@ -44,6 +44,8 @@ Watch [this talk by Alexandra Noonan](https://www.youtube.com/watch?v=hIFeaeZ9_A
 - [Python3.6](https://www.python.org/downloads/release/python-368/) (attempting to use > 3.6 may cause weird errors)
 - [Bonobo ETL](https://www.bonobo-project.org/)
 - [SqlAlchemy](https://www.sqlalchemy.org/)
+- [Selenium](https://selenium-python.readthedocs.io/)
+- [requests](https://requests.readthedocs.io/en/master/)
 
 ## How to set up Debian server for Selenium Chrome driver
 
