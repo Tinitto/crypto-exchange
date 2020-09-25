@@ -8,6 +8,8 @@ from datetime import datetime
 from typing import Iterator, Dict, Any, List, Optional
 from enum import Enum
 
+from app.core.utils.xml import read_xml_file
+
 ASSET_FOLDER_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'assets')
 
@@ -54,8 +56,10 @@ def read_csv_file(file_path: str, headers: Optional[List[str]] = None, **kwargs)
         yield from csv_dict_reader
 
 
-def read_xls_file(file_path: str, headers: Optional[List[str]] = None,
-                  sheet_name: Optional[str] = None, sheet_index: Optional[int] = 1, **kwargs) -> Iterator[Dict[str, Any]]:
+def read_xls_file(file_path: str,
+                  headers: Optional[List[str]] = None,
+                  sheet_name: Optional[str] = None,
+                  sheet_index: Optional[int] = 1, **kwargs) -> Iterator[Dict[str, Any]]:
     """Reads the XLS file and returns the rows in the file as an iterator"""
     with xlrd.open_workbook(file_path, on_demand=True) as xls_file:
         if isinstance(sheet_name, str):
@@ -76,17 +80,24 @@ def read_xls_file(file_path: str, headers: Optional[List[str]] = None,
             yield dict(zip(headers, row_values))
 
 
-def read_file(file_path: str, headers: Optional[List[str]] = None,
-              file_type: FileType = FileType.CSV, **kwargs) -> Iterator[Dict[str, Any]]:
+def read_file(file_path: str,
+              headers: Optional[List[str]] = None,
+              file_type: FileType = FileType.CSV,
+              xml_records_tag: Optional[str] = None, **kwargs) -> Iterator[Dict[str, Any]]:
     """Reads the Downloaded file and returns the rows in the file as an iterator"""
     with open(file_path, 'r') as file:
         if file_type == FileType.CSV:
             yield from read_csv_file(file_path=file_path, headers=headers)
 
-        if file_type == FileType.XLS:
+        elif file_type == FileType.XLS:
             yield from read_xls_file(file_path=file_path, headers=headers, **kwargs)
 
-        raise ValueError('The given file_type cannot be handled by program')
+        elif file_type == FileType.XML:
+            yield from read_xml_file(
+                file_path=file_path, to_dict=True, records_tag=xml_records_tag, **kwargs)
+
+        else:
+            raise ValueError('The given file_type cannot be handled by program')
 
 
 def delete_parent_folder(file_path: str):
