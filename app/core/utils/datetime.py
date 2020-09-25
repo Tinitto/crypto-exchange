@@ -21,6 +21,18 @@ def get_default_historical_start_date() -> Optional[date]:
     return date(year=int(start_year), month=start_month, day=start_day)
 
 
+def get_default_historical_start_datetime() -> Optional[date]:
+    """Extracts the default start_date from the environment and returns datetime"""
+    start_year = os.getenv('HISTORICAL_STARTING_YEAR', None)
+    start_month = int(os.getenv('HISTORICAL_STARTING_MONTH', 1))
+    start_day = int(os.getenv('HISTORICAL_STARTING_DAY', 1))
+
+    if start_year is None:
+        return None
+
+    return datetime(year=int(start_year), month=start_month, day=start_day)
+
+
 def update_date(date_to_update: date, days_to_increment_by: int, days_to_decrement_by: int):
     """Updates a given date by incrementing and/or decrementing it"""
     return date_to_update + timedelta(days=days_to_increment_by) - timedelta(days=days_to_decrement_by)

@@ -21,7 +21,7 @@ class TokyoCEDatetimeBasedFileDownloadSiteSource(DatetimeBasedFileDownloadSiteSo
     file_prefix: str = ''
     timeout: int = 10
 
-    def _download_csv(self, start_datetime: datetime, end_datetime: datetime) -> str:
+    def _download_file(self, start_datetime: datetime, end_datetime: datetime) -> str:
         """
         Downloads csv from the site by feeding in the start datetime and downloading the csv
         """

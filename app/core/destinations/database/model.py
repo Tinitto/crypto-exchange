@@ -1,7 +1,8 @@
 """Base class for models"""
 import logging
-from typing import Dict, Any, Type, List
+from typing import Dict, Any, Type, List, Optional
 
+import sqlalchemy
 from sqlalchemy import inspect, and_, or_, Column, DateTime, schema, engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import Session
@@ -19,12 +20,40 @@ class DatabaseBaseModel(DestinationBaseModel):
     __table__: Any
     _db_configuration: DatabaseConnectionConfig
     _base_declarative_class: Type[declarative_base()]
+    _datetime_fields: Optional[List[str]] = None
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     @classmethod
     def get_attributes(cls) -> List[str]:
         return cls.__table__.columns.keys()
+
+    @classmethod
+    def get_last_record(cls):
+        """Returns the last record that was put in the database"""
+        if not isinstance(cls._datetime_fields, list):
+            return None
+
+        try:
+            with DatabaseConnection.get_db_connection(
+                    db_connection_config=cls._db_configuration) as db_connection:
+                session = db_connection.db_session
+                return session.query(cls).order_by(
+                    *(getattr(cls, datetime_field).desc()
+                      for datetime_field in cls._datetime_fields)).first()
+        except sqlalchemy.exc.ProgrammingError:
+            return None
+
+    @classmethod
+    def get_last_saved_timestamp(cls) -> Optional[List[Any]]:
+        """Returns the timestamp of the last saved record"""
+        last_record = cls.get_last_record()
+
+        if isinstance(last_record, cls):
+            timestamps = [getattr(last_record, datetime_field) for datetime_field in cls._datetime_fields]
+            return timestamps[0] if len(timestamps) == 1 else timestamps
+
+        return None
 
     def update(self, session: Session, **kwargs):
         """
@@ -96,4 +125,3 @@ class DatabaseBaseModel(DestinationBaseModel):
             record = cls(**data)
             record.save(session)
             return data
-

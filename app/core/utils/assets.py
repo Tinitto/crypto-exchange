@@ -2,12 +2,20 @@
 import logging
 import os
 import shutil
+import xlrd
 from csv import DictReader
 from datetime import datetime
 from typing import Iterator, Dict, Any, List, Optional
+from enum import Enum
 
 ASSET_FOLDER_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'assets')
+
+
+class FileType(Enum):
+    CSV = 'csv'
+    XLS = 'xls'
+    XML = 'xml'
 
 
 def get_asset_path(asset_name: str):
@@ -39,11 +47,46 @@ def get_csv_download_location(dataset_name: str = ''):
     return get_timestamped_folder(root_path=csv_folder_path, prefix=dataset_name)
 
 
-def read_csv_file(file_path: str, headers: Optional[List[str]] = None) -> Iterator[Dict[str, Any]]:
-    """Reads the Downloaded file and returns the rows in the file as an iterator"""
+def read_csv_file(file_path: str, headers: Optional[List[str]] = None, **kwargs) -> Iterator[Dict[str, Any]]:
+    """Reads the CSV file and returns the rows in the file as an iterator"""
     with open(file_path, 'r') as csv_file:
         csv_dict_reader = DictReader(csv_file, fieldnames=headers)
         yield from csv_dict_reader
+
+
+def read_xls_file(file_path: str, headers: Optional[List[str]] = None,
+                  sheet_name: Optional[str] = None, sheet_index: Optional[int] = 1, **kwargs) -> Iterator[Dict[str, Any]]:
+    """Reads the XLS file and returns the rows in the file as an iterator"""
+    with xlrd.open_workbook(file_path, on_demand=True) as xls_file:
+        if isinstance(sheet_name, str):
+            sheet = xls_file.sheet_by_name(sheet_name)
+        elif isinstance(sheet_index, int):
+            sheet = xls_file.sheet_by_index(sheet_index)
+        else:
+            raise ValueError('A sheet_name or sheet_index should be provided')
+
+        for row in sheet.get_rows():
+            row_values = sheet.row_values(rowx=row)
+
+            # should run once on the first row
+            if headers is None:
+                headers = row_values
+                continue
+
+            yield dict(zip(headers, row_values))
+
+
+def read_file(file_path: str, headers: Optional[List[str]] = None,
+              file_type: FileType = FileType.CSV, **kwargs) -> Iterator[Dict[str, Any]]:
+    """Reads the Downloaded file and returns the rows in the file as an iterator"""
+    with open(file_path, 'r') as file:
+        if file_type == FileType.CSV:
+            yield from read_csv_file(file_path=file_path, headers=headers)
+
+        if file_type == FileType.XLS:
+            yield from read_xls_file(file_path=file_path, headers=headers, **kwargs)
+
+        raise ValueError('The given file_type cannot be handled by program')
 
 
 def delete_parent_folder(file_path: str):
