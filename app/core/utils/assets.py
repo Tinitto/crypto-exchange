@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Iterator, Dict, Any, List, Optional
 from enum import Enum
 
-from app.core.utils.xml import read_xml_file
+from xml_stream import read_xml_file
 
 ASSET_FOLDER_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'assets')

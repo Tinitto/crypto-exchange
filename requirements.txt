@@ -32,3 +32,4 @@ urllib3==1.25.10
 webdriver-manager==3.2.2
 whistle==1.0.1
 xlrd==1.2.0
+xml-stream==0.0.2
