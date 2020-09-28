@@ -10,6 +10,11 @@ class DestinationBaseModel:
         """Returns the attributes/fields this model has"""
         raise NotImplementedError('get_attributes method not implemented.')
 
+    @classmethod
+    def get_last_saved_timestamp(cls):
+        """Returns the last saved timestamp"""
+        return None
+
     def update(self, *args, **kwargs):
         """
         Updates the attributes passed in the kwargs and saves

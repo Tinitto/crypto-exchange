@@ -16,6 +16,14 @@ class DatetimeBasedBaseController(BaseController):
     source_class: Type[DatetimeBasedBaseSource]
 
     @classmethod
+    def _update_last_timestamp(cls):
+        """Updates the last timestamp property of this class"""
+        super()._update_last_timestamp()
+
+        if isinstance(cls._last_timestamp, datetime):
+            cls.start_datetime = cls._last_timestamp
+
+    @classmethod
     def _query_source(cls, ) -> Iterator[Dict[Any, Any]]:
         """Queries the data source"""
         cls._update_source(start_datetime=cls.start_datetime, end_datetime=cls.end_datetime)

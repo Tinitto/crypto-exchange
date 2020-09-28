@@ -1,8 +1,10 @@
-from typing import Type
+from datetime import date
+from typing import Type, Optional
 
 from app.core.controllers.base.date_based import DateBasedBaseController
 from app.core.destinations.database.model import DatabaseBaseModel
 from app.core.sources.file_download_site.date_based import DateBasedFileDownloadSiteSource
+from app.core.utils.datetime import get_default_historical_start_date
 
 
 class DateBasedFileDownloadSiteToDBController(DateBasedBaseController):
@@ -14,3 +16,4 @@ class DateBasedFileDownloadSiteToDBController(DateBasedBaseController):
 
     destination_model_class: Type[DatabaseBaseModel]
     source_class: Type[DateBasedFileDownloadSiteSource]
+    start_date: Optional[date] = get_default_historical_start_date()
