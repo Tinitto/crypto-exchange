@@ -1,17 +1,13 @@
 """The quotes for all products by trade date resource got from the export site"""
-from typing import List
-
 from app.core.utils.assets import FileOptions
-from ..abstract.sources.datetime_based_source import TokyoCEDatetimeBasedFileDownloadSiteSource
+from ..abstract.sources.index_based_source import TokyoCEIndexBasedFileDownloadSiteSource
 
 
-class QuotesByTradeDateDataset(TokyoCEDatetimeBasedFileDownloadSiteSource):
+class QuotesByTradeDateDataset(TokyoCEIndexBasedFileDownloadSiteSource):
     """Class for getting quotes for all products data from the Tokyo Commodity Exchange export site"""
-    start_datetime_select_input_xpath: str = '//*[@id="article"]/form/table[3]/tbody/tr[1]/td[5]/select'
+    file_select_input_xpath: str = '//*[@id="article"]/form/table[3]/tbody/tr[1]/td[5]/select'
     download_button_xpath: str = '//*[@id="article"]/form/table[3]/tbody/tr[1]/td[5]/input'
     name: str = 'Quotes for all products by trade date'
-    default_batch_size_in_milliseconds: int = 5 * 60 * 1000  # 5 minutes
-    file_prefix: str = 'souba_d_'
     file_options: FileOptions = FileOptions(xls_or_csv_headers=[
         "update_date",
         "update_time",

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List, Iterator, Dict, Any
+from typing import Iterator, Dict, Any
 
 from app.core.sources.base.datetime_based import DatetimeBasedBaseSource
 from app.core.utils.assets import read_file, delete_parent_folder, FileType, FileOptions

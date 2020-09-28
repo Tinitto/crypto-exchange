@@ -24,7 +24,7 @@ class ControllerForQuotesByTradeDate(DatetimeBasedFileDownloadSiteToDBController
     """
     destination_model_class: Type[DatabaseBaseModel] = QuoteByTradeDate
     source_class: Type[DatetimeBasedFileDownloadSiteSource] = QuotesByTradeDateDataset
-    interval_in_milliseconds: int = 20000
+    interval_in_milliseconds: int = 60 * 60 * 1000  # 1 hour
     start_datetime: Optional[datetime] = datetime.now().replace(minute=0) - timedelta(days=2)
     transformer_classes: List[Type[BaseTransformer]] = [
         EmptyStringTransformer,

@@ -1,33 +1,32 @@
 """Module containing the class file for the download site source from Tokyo Commodity Exchange
 that bases on start date"""
+import asyncio
 import logging
 import os
-from datetime import date, datetime
+from typing import Optional
 
 import selenium
 from selenium.webdriver.support.select import Select
 
-from app.core.sources.file_download_site.datetime_based import DatetimeBasedFileDownloadSiteSource
-from app.core.utils.assets import get_csv_download_location
+from app.core.sources.file_download_site.index_based import IndexBasedFileDownloadSiteSource
+from app.core.utils.assets import get_csv_download_location, read_file, delete_parent_folder
 from app.core.utils.selenium import get_web_driver, WebDriverOptions, visit_website, get_html_element_by_xpath, \
     wait_for_download_to_complete
 
 
-class TokyoCEDatetimeBasedFileDownloadSiteSource(DatetimeBasedFileDownloadSiteSource):
+class TokyoCEIndexBasedFileDownloadSiteSource(IndexBasedFileDownloadSiteSource):
     """Class with configurations for any resource to be downloaded from the Tokyo Commodity Exchange export site"""
-    start_datetime_select_input_xpath: str
+    file_select_input_xpath: str
     download_button_xpath: str
     base_uri: str = os.getenv('TOKYO_COMMODITIES_FILE_DOWNLOAD_URI')
-    file_prefix: str = ''
     timeout: int = 10
+    number_of_indices: Optional[int] = None
 
-    def _download_file(self, start_datetime: datetime, end_datetime: datetime) -> str:
+    def _download_file(self, current_option_index: int, **kwargs) -> str:
         """
-        Downloads csv from the site by feeding in the start datetime and downloading the csv
+        Downloads csv from the site and downloading the csv
         """
         downloads_folder = get_csv_download_location(dataset_name=self.name.replace(' ', '_'))
-        expected_file_name = f'{self.file_prefix}{start_datetime.strftime("%Y%m%d_%Y%m%d_%H%M")}.csv'
-        expected_file_path = os.path.join(downloads_folder, expected_file_name)
 
         tokyo_c_e_driver = get_web_driver(
             WebDriverOptions(downloads_folder_location=downloads_folder))
@@ -36,14 +35,20 @@ class TokyoCEDatetimeBasedFileDownloadSiteSource(DatetimeBasedFileDownloadSiteSo
             visit_website(driver=tokyo_c_e_driver, website_url=self.base_uri)
 
             start_datetime_select_input = Select(get_html_element_by_xpath(driver=tokyo_c_e_driver,
-                                                                           xpath=self.start_datetime_select_input_xpath))
+                                                                           xpath=self.file_select_input_xpath))
             download_button = get_html_element_by_xpath(driver=tokyo_c_e_driver,
                                                         xpath=self.download_button_xpath)
+            options = start_datetime_select_input.options
 
-            start_datetime_select_input.select_by_value(expected_file_name)
+            if self.number_of_indices is None:
+                self.number_of_indices = len(options)
 
+            current_option = options[current_option_index]
+            expected_file_name = current_option.get_attribute('value')
+            current_option.click()
             download_button.click()
 
+            expected_file_path = os.path.join(downloads_folder, expected_file_name)
             wait_for_download_to_complete(expected_file_path=expected_file_path, timeout=self.timeout)
         except selenium.common.exceptions.NoSuchElementException as exp:
             logging.error(exp)
