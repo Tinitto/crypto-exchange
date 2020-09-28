@@ -120,7 +120,7 @@ python main.py
 - [ ] Add websocket data source
 - [ ] Add websocket-to-db controller
 - [ ] Add nomics service
-- [ ] Add tokyo_commodity_exchange_service
+- [x] Add tokyo_commodity_exchange_service
 - [ ] Add iex service
 - [ ] Add finnhub service
 - [ ] Add websocket destination
