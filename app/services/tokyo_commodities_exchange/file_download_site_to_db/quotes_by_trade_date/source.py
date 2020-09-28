@@ -1,6 +1,7 @@
 """The quotes for all products by trade date resource got from the export site"""
 from typing import List
 
+from app.core.utils.assets import FileOptions
 from ..abstract.sources.datetime_based_source import TokyoCEDatetimeBasedFileDownloadSiteSource
 
 
@@ -11,7 +12,7 @@ class QuotesByTradeDateDataset(TokyoCEDatetimeBasedFileDownloadSiteSource):
     name: str = 'Quotes for all products by trade date'
     default_batch_size_in_milliseconds: int = 5 * 60 * 1000  # 5 minutes
     file_prefix: str = 'souba_d_'
-    headers: List[str] = [
+    file_options: FileOptions = FileOptions(xls_or_csv_headers=[
         "update_date",
         "update_time",
         "trade_date",
@@ -35,4 +36,4 @@ class QuotesByTradeDateDataset(TokyoCEDatetimeBasedFileDownloadSiteSource):
         "settlement_price",
         "volume",
         "volume_total_by_products"
-    ]
+    ])
