@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import Iterator, Dict, Any, Optional
 
 import requests
+from email_notifier import ExceptionNotifier
 
 from app.core.sources.base.datetime_based import DatetimeBasedBaseSource
 
@@ -23,7 +24,12 @@ class DatetimeBasedRestAPISource(DatetimeBasedBaseSource):
         """Queries a given start and end date and returns an iterator with data records"""
         url = self._get_data_url(start_datetime=start_datetime, end_datetime=end_datetime)
 
-        if self.response_data_key is None:
-            yield from requests.get(url=url).json()
-        else:
-            yield from requests.get(url=url).json().get(self.response_data_key)
+        try:
+            if self.response_data_key is None:
+                yield from requests.get(url=url).json()
+            else:
+                yield from requests.get(url=url).json().get(self.response_data_key)
+        except TypeError as exp:
+            exception_notifier = ExceptionNotifier(subject="Empty Response")
+            exception_notifier.notify(exp)
+            yield from []
