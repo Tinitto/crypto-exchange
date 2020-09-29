@@ -77,9 +77,27 @@ class BaseController:
             transformed_data = data
 
             for transformer in cls.transformer_classes:
-                transformed_data = transformer.run(data=transformed_data)
+                if isinstance(transformed_data, list):
+                    list_output = []
 
-            yield transformed_data
+                    for datum in transformed_data:
+                        data_from_current_transformer = transformer.run(data=datum)
+
+                        # spread the returned list into the final output
+                        if isinstance(data_from_current_transformer, list):
+                            list_output = list_output + data_from_current_transformer
+                        # append the returned item to the list output
+                        else:
+                            list_output.append(data_from_current_transformer)
+
+                    transformed_data = list_output
+                else:
+                    transformed_data = transformer.run(data=transformed_data)
+
+            if isinstance(transformed_data, list):
+                yield from transformed_data
+            else:
+                yield transformed_data
         except _KNOWN_TRANSFORMATION_EXCEPTIONS as exp:
             logging.error(f'{cls._source.name} Transformation \n{exp}')
             yield None

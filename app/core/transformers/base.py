@@ -1,5 +1,5 @@
 """Module containing the base transformer for data"""
-from typing import Dict, Any
+from typing import Dict, Any, Union, List
 
 
 class BaseTransformer:
@@ -9,6 +9,6 @@ class BaseTransformer:
     """
 
     @classmethod
-    def run(cls, data: Dict[Any, Any]) -> Dict[Any, Any]:
+    def run(cls, data: Dict[Any, Any]) -> Union[Dict[Any, Any], List[Any]]:
         """This transforms the data"""
         return data

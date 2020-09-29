@@ -65,6 +65,12 @@ def read_csv_file(file_path: str, xls_or_csv_headers: Optional[List[str]] = None
         yield from csv_dict_reader
 
 
+def get_xml_download_location(dataset_name: str = ''):
+    """Returns the path to the xml folder asset"""
+    csv_folder_path = get_asset_path(asset_name='xml')
+    return get_timestamped_folder(root_path=csv_folder_path, prefix=dataset_name)
+
+
 def read_xls_file(file_path: str,
                   xls_or_csv_headers: Optional[List[str]] = None,
                   xls_sheet_name: Optional[str] = None,
@@ -102,7 +108,7 @@ def read_file(file_path: str,
 
         elif file_type == FileType.XML:
             yield from read_xml_file(
-                file_path=file_path, to_dict=True, **dict(options))
+                file_path=file_path, to_dict=True,  records_tag=options.xml_records_tag)
 
         else:
             raise ValueError('The given file_type cannot be handled by program')
