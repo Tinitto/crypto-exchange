@@ -29,8 +29,11 @@ class FileOptions(BaseModel):
     xls_or_csv_headers: Optional[List[str]] = None
 
 
-def get_asset_path(asset_name: str):
+def get_asset_path(asset_name: Optional[str] = None):
     """Returns the path of a given asset"""
+    if asset_name is None:
+        return ASSET_FOLDER_PATH
+
     return os.path.join(ASSET_FOLDER_PATH, asset_name)
 
 

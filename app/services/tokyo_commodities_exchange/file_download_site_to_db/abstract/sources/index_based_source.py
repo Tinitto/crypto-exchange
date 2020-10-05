@@ -9,8 +9,7 @@ import selenium
 from selenium.webdriver.support.select import Select
 
 from app.core.sources.file_download_site.index_based import IndexBasedFileDownloadSiteSource
-from app.core.utils.assets import get_csv_download_location, read_file, delete_parent_folder
-from app.core.utils.selenium import get_web_driver, WebDriverOptions, visit_website, get_html_element_by_xpath, \
+from app.core.utils.selenium import get_html_element_by_xpath, \
     wait_for_download_to_complete
 
 
@@ -26,17 +25,10 @@ class TokyoCEIndexBasedFileDownloadSiteSource(IndexBasedFileDownloadSiteSource):
         """
         Downloads csv from the site and downloading the csv
         """
-        downloads_folder = get_csv_download_location(dataset_name=self.name.replace(' ', '_'))
-
-        tokyo_c_e_driver = get_web_driver(
-            WebDriverOptions(downloads_folder_location=downloads_folder))
-
         try:
-            visit_website(driver=tokyo_c_e_driver, website_url=self.base_uri)
-
-            start_datetime_select_input = Select(get_html_element_by_xpath(driver=tokyo_c_e_driver,
+            start_datetime_select_input = Select(get_html_element_by_xpath(driver=self.chrome,
                                                                            xpath=self.file_select_input_xpath))
-            download_button = get_html_element_by_xpath(driver=tokyo_c_e_driver,
+            download_button = get_html_element_by_xpath(driver=self.chrome,
                                                         xpath=self.download_button_xpath)
             options = start_datetime_select_input.options
 
@@ -48,12 +40,10 @@ class TokyoCEIndexBasedFileDownloadSiteSource(IndexBasedFileDownloadSiteSource):
             current_option.click()
             download_button.click()
 
-            expected_file_path = os.path.join(downloads_folder, expected_file_name)
+            expected_file_path = os.path.join(self.download_folder_path, expected_file_name)
             wait_for_download_to_complete(expected_file_path=expected_file_path, timeout=self.timeout)
         except selenium.common.exceptions.NoSuchElementException as exp:
             logging.error(exp)
             expected_file_path = None
-        finally:
-            tokyo_c_e_driver.close()
 
         return expected_file_path

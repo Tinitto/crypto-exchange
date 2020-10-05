@@ -1,8 +1,12 @@
 import asyncio
 from typing import Iterator, Dict, Any, Optional
 
+from selenium import webdriver
+
 from app.core.sources.base import BaseSource
-from app.core.utils.assets import read_file, delete_parent_folder, FileType, FileOptions
+from app.core.utils.assets import read_file, delete_parent_folder, FileType, FileOptions, get_csv_download_location, \
+    get_xml_download_location, get_asset_path
+from app.core.utils.selenium import get_web_driver, WebDriverOptions, visit_website
 
 
 class IndexBasedFileDownloadSiteSource(BaseSource):
@@ -10,6 +14,28 @@ class IndexBasedFileDownloadSiteSource(BaseSource):
     file_options: FileOptions = FileOptions()
     number_of_indices: Optional[int] = None
     seconds_between_downloads: int = 3
+    chrome: Optional[webdriver.Chrome] = None
+    download_folder_path: Optional[str] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    def _initialize_chrome(self):
+        """Initializes Chrome in case it is not yet initialized"""
+        if isinstance(self.chrome, webdriver.Chrome):
+            return
+
+        if self.file_type == FileType.CSV:
+            self.download_folder_path = get_csv_download_location(dataset_name=self.name.replace(' ', '_'))
+        elif self.file_type == FileType.XML:
+            self.download_folder_path = get_xml_download_location(dataset_name=self.name.replace(' ', '_'))
+        else:
+            self.download_folder_path = get_asset_path()
+
+        self.chrome = get_web_driver(
+            WebDriverOptions(downloads_folder_location=self.download_folder_path))
+
+        visit_website(driver=self.chrome, website_url=self.base_uri)
 
     def _download_file(self, current_option_index: int) -> str:
         """Downloads the CSV from the export site and returns the path to it"""
@@ -17,6 +43,7 @@ class IndexBasedFileDownloadSiteSource(BaseSource):
 
     def _query_data_source(self, **kwargs) -> Iterator[Dict[str, Any]]:
         """Queries a given source and returns an iterator with data records"""
+        self._initialize_chrome()
         current_option_index = 0
 
         while True:
@@ -40,3 +67,8 @@ class IndexBasedFileDownloadSiteSource(BaseSource):
 
             # to avoid Denial of Service (DOS) on the server
             asyncio.sleep(self.seconds_between_downloads)
+
+    def __del__(self):
+        """Clean up"""
+        if isinstance(self.chrome, webdriver.Chrome):
+            self.chrome.quit()
