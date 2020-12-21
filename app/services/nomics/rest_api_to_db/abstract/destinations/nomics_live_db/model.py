@@ -1,7 +1,7 @@
 """Module containing configurations for the nomics database destination"""
 from sqlalchemy.ext.declarative import declarative_base
 
-from app.core.destinations.database.model import DatabaseBaseModel
+from judah.destinations.database.model import DatabaseBaseModel
 
 NomicsLiveDBBase = declarative_base()
 
