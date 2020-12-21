@@ -1,7 +1,7 @@
 """Module with the connection settings for the Finnhub Historical service"""
 import os
 
-from app.core.destinations.database.config import DatabaseConnectionConfig
+from judah.destinations.database.config import DatabaseConnectionConfig
 
 
 class FinnhubHistoricalDbConnectionConfig(DatabaseConnectionConfig):
