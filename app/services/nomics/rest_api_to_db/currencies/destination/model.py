@@ -1,4 +1,7 @@
-"""Model for quotes for all products by day session"""
+"""
+Model for currencies supported by the Nomics API
+https://nomics.com/docs/#operation/getCurrencies
+"""
 import sqlalchemy as orm
 
 from ...abstract.destinations.nomics_live_db.connection import NomicsDbConnectionConfig

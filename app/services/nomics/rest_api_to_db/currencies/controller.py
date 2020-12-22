@@ -1,4 +1,7 @@
-"""Controller for getting all currencies supported by Nomics"""
+"""
+Controller for getting all currencies supported by Nomics
+https://nomics.com/docs/#operation/getCurrencies
+"""
 from typing import Type, List
 
 from judah.destinations.database.model import DatabaseBaseModel
