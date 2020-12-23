@@ -4,7 +4,7 @@ from typing import Type
 from judah.controllers.base import BaseController
 from judah.destinations.database.model import DatabaseBaseModel
 
-from ..sources.bulk_source import NomicsBulkRestApiSource
+from ..sources.bulk import NomicsBulkRestApiSource
 
 
 class NomicsBulkRestAPIToDatabaseController(BaseController):

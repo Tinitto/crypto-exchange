@@ -10,7 +10,7 @@ from judah.transformers.base import BaseTransformer
 from .destination.model import Currencies
 from .source import CurrenciesDataset
 from ..abstract.controllers.bulk import NomicsBulkRestAPIToDatabaseController
-from ..abstract.sources.bulk_source import NomicsBulkRestApiSource
+from ..abstract.sources.bulk import NomicsBulkRestApiSource
 
 
 class ControllerForCurrencies(NomicsBulkRestAPIToDatabaseController):

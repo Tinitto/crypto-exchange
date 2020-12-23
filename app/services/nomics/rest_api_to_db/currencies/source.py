@@ -2,7 +2,7 @@
 The currencies supported by Nomics resource got from the /currencies endpoint
 https://nomics.com/docs/#operation/getCurrencies
 """
-from ..abstract.sources.bulk_source import NomicsBulkRestApiSource
+from ..abstract.sources.bulk import NomicsBulkRestApiSource
 
 
 class CurrenciesDataset(NomicsBulkRestApiSource):
