@@ -142,3 +142,5 @@ assets/csv/*
 
 assets/xml/*
 !assets/xml/.gitkeep
+
+assets/*.log*
