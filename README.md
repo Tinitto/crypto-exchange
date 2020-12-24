@@ -121,7 +121,7 @@ python main.py
 - [x] Add transformation types
 - [ ] Add websocket data source
 - [ ] Add websocket-to-db controller
-- [ ] Add nomics service
+- [x] Add nomics service
 - [x] Add tokyo_commodity_exchange_service
 - [ ] Add iex service
 - [ ] Add finnhub service
