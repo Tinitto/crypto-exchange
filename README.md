@@ -64,7 +64,24 @@ sudo apt-get install -y curl unzip xvfb libxi6 libgconf-2-4
 ```bash
 
 sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+```
+
+- Open or create the file `/etc/apt/sources.list.d/google-chrome.list`
+
+```bash
+sudo nano /etc/apt/sources.list.d/google-chrome.list
+```
+
+- Add the words `deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main` to the `/etc/apt/sources.list.d/google-chrome.list` file.
+
+```bash
 sudo echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+```
+**If the command above fails because of permissions, do the copy and paste manually using `nano /etc/apt/sources.list.d/google-chrome.list`**
+
+- Install Google chrome
+
+```bash
 sudo apt-get -y update
 sudo apt-get -y install google-chrome-stable
 ```
@@ -113,6 +130,9 @@ python main.py
 - Check the databases (basing on the settings in the `.env` file) for the records added.
 
 ### How to Run as a systemd service
+
+- Ensure you have Google Chrome installed. For debian servers, see instructions under the 
+title "How to set up Debian server for Selenium Chrome driver" 
 
 - Go to the root of your user
 
@@ -171,15 +191,13 @@ sudo systemctl start market_exchange.service
 
 - Enable the service to start on start up
 
-``` 
-#!bash
+```bash
 sudo systemctl enable market_exchange
 ```
 
 - Check the status of the service to see if it is running
 
-``` 
-#!bash
+```bash
 sudo systemctl status market_exchange
 ```
 
