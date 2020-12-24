@@ -76,14 +76,14 @@ title "How to set up Debian server for Selenium Chrome driver"
 - Clone the repo
 
 ```bash
-git clone <url_of_repo>
+git clone https://github.com/Tinitto/market_exchange.git
 ```
 
 - Create a virtualenv
 
 ```bash
 
-cd stock-exchange && python3.6 -m venv env
+cd market_exchange && python3 -m venv env
 ```
 - Activate the virtual environment
 
@@ -111,6 +111,82 @@ python main.py
 ```
 
 - Check the databases (basing on the settings in the `.env` file) for the records added.
+
+### How to Run as a systemd service
+
+- Go to the root of your user
+
+```bash
+
+cd ~
+```
+
+- Create a projects folder there and enter it
+
+```bash
+mkdir projects cd projects
+```
+
+- Clone the repo
+
+```bash
+git clone https://github.com/Tinitto/market_exchange.git
+```
+
+- Create a virtualenv
+
+```bash
+cd market_exchange && python3 -m venv env
+```
+
+- Activate the virtual environment and install dependencies
+
+```bash
+source env/bin/activate && pip install -r requirements.txt
+```
+
+- Copy the `.example.env` file to `.env` and update the variables in there
+
+```bash
+cp .example.env .env
+```
+
+- Copy the `market_exchange.service` file to the systemd service folder
+
+```bash
+sudo cp market_exchange.service /etc/systemd/system/market_exchange.service
+```
+
+- Change the `User` and the `MARKET_XCHANGE_WORKING_DIRECTORY` variables in `/etc/systemd/system/market_exchange.service`.
+
+```bash
+sudo nano /etc/systemd/system/market_exchange.service
+``` 
+
+- Start the service
+
+```bash
+sudo systemctl start market_exchange.service
+```
+
+- Enable the service to start on start up
+
+``` 
+#!bash
+sudo systemctl enable market_exchange
+```
+
+- Check the status of the service to see if it is running
+
+``` 
+#!bash
+sudo systemctl status market_exchange
+```
+
+- Press `q` to exit
+
+- Check the databases, you set in the `.env` file, for the records added.
+
 
 ## ToDo
 

@@ -1,0 +1,15 @@
+[Unit]
+Description=market_exchange service
+After=network.target
+
+[Service]
+Type=simple
+User=<your_user_name>
+TimeoutStartSec=0
+Restart=always
+Environment=MARKET_XCHANGE_WORKING_DIRECTORY=/home/<your_user_name>/projects/market_exchange
+WorkingDirectory=$MARKET_XCHANGE_WORKING_DIRECTORY
+ExecStart=$MARKET_XCHANGE_WORKING_DIRECTORY/env/bin/python main.py
+
+[Install]
+WantedBy=multi-user.target
